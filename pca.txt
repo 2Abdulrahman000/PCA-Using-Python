@@ -1,0 +1,50 @@
+import numpy as np
+from numpy import random
+from numpy.core.fromnumeric import size
+from numpy.random.mtrand import poisson
+import pandas as pd
+import matplotlib.pyplot as plt
+import random as rd
+#from sklearn import preprocessing
+#from sklearn.decompostion import PCA
+
+#1-Create Dataset with Virtual digital array of numbers for each gene
+genes = ['gene'+str(i1) for i1 in range(1,101)]
+wt=['wt'+str(i2) for i2 in range(1,6)]
+ko=['ko'+str(i3) for i3 in range(1,6)]
+data=pd.DataFrame(columns=[*wt,*ko],index=genes)
+for gene in data.index:
+    data.loc[gene,'wt1':'wt5']=np.random.poisson(lam=rd.randrange(10,1000),size=5)
+    data.loc[gene,'ko1':'ko5']=np.random.poisson(lam=rd.randrange(10,1000),size=5)
+print(data.head())
+
+#2-reduce difference between values in each row
+scaled_data=preprocessing.scale(data.T)
+pca =PCA()
+pca.fit(scaled_data)
+pca_data=pca.transform(scaled_data)
+
+
+#3-show precentage variance plot for pc(about 10 genes)
+per_var=np.round(pca.explanied_variance_ratio_*100,decimals=1)
+labels=['PC'+str(i4) for i4 in range(1,len(per_var)+1)]
+
+plt.bar(x=range(1,len(per_var)+1),height=per_var)
+plt.xlabel('Principal Component')
+plt.ylabel('Percentage of Explained Variance')
+plt.title('Scree plot')
+plt.show()
+
+#4-
+pca_df=pd.DataFrame(pca_data,index=[*wt,*ko],columns=labels)
+plt.scatter(pca_df.PC1,pca_df.PC2)
+plt.title('PCA Graph')
+plt.xlabel('PC1'+per_var[0])
+plt.ylabel('PC2'+per_var[1])
+for sample in pca_df.index:
+    plt.annotate(sample , pca_df.PC1.loc[sample] , pca_df.PC2.loc[sample])
+plt.show()
+
+
+carbon :
+https://carbon.now.sh/?bg=rgba%280%2C181%2C203%2C1%29&t=vscode&wt=none&l=python&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=56px&ph=56px&ln=false&fl=1&fm=Fira+Code&fs=14px&lh=152%25&si=false&es=2x&wm=false&code=import%2520numpy%2520as%2520np%250Afrom%2520numpy%2520import%2520random%250Afrom%2520numpy.core.fromnumeric%2520import%2520size%250Afrom%2520numpy.random.mtrand%2520import%2520poisson%250Aimport%2520pandas%2520as%2520pd%250Aimport%2520matplotlib.pyplot%2520as%2520plt%250Aimport%2520random%2520as%2520rd%250A%2523from%2520sklearn%2520import%2520preprocessing%250A%2523from%2520sklearn.decompostion%2520import%2520PCA%250A%250A%25231-Create%2520Dataset%2520with%2520Virtual%2520digital%2520array%2520of%2520numbers%2520for%2520each%2520gene%250Agenes%2520%253D%2520%255B%27gene%27%252Bstr%28i1%29%2520for%2520i1%2520in%2520range%281%252C101%29%255D%250Awt%253D%255B%27wt%27%252Bstr%28i2%29%2520for%2520i2%2520in%2520range%281%252C6%29%255D%250Ako%253D%255B%27ko%27%252Bstr%28i3%29%2520for%2520i3%2520in%2520range%281%252C6%29%255D%250Adata%253Dpd.DataFrame%28columns%253D%255B*wt%252C*ko%255D%252Cindex%253Dgenes%29%250Afor%2520gene%2520in%2520data.index%253A%250A%2520%2520%2520%2520data.loc%255Bgene%252C%27wt1%27%253A%27wt5%27%255D%253Dnp.random.poisson%28lam%253Drd.randrange%2810%252C1000%29%252Csize%253D5%29%250A%2520%2520%2520%2520data.loc%255Bgene%252C%27ko1%27%253A%27ko5%27%255D%253Dnp.random.poisson%28lam%253Drd.randrange%2810%252C1000%29%252Csize%253D5%29%250Aprint%28data.head%28%29%29%250A%250A%25232-reduce%2520difference%2520between%2520values%2520in%2520each%2520row%250Ascaled_data%253Dpreprocessing.scale%28data.T%29%250Apca%2520%253DPCA%28%29%250Apca.fit%28scaled_data%29%250Apca_data%253Dpca.transform%28scaled_data%29%250A%250A%250A%25233-show%2520precentage%2520variance%2520plot%2520for%2520pc%28about%252010%2520genes%29%250Aper_var%253Dnp.round%28pca.explanied_variance_ratio_*100%252Cdecimals%253D1%29%250Alabels%253D%255B%27PC%27%252Bstr%28i4%29%2520for%2520i4%2520in%2520range%281%252Clen%28per_var%29%252B1%29%255D%250A%250Aplt.bar%28x%253Drange%281%252Clen%28per_var%29%252B1%29%252Cheight%253Dper_var%29%250Aplt.xlabel%28%27Principal%2520Component%27%29%250Aplt.ylabel%28%27Percentage%2520of%2520Explained%2520Variance%27%29%250Aplt.title%28%27Scree%2520plot%27%29%250Aplt.show%28%29%250A%250A%25234-%250Apca_df%253Dpd.DataFrame%28pca_data%252Cindex%253D%255B*wt%252C*ko%255D%252Ccolumns%253Dlabels%29%250Aplt.scatter%28pca_df.PC1%252Cpca_df.PC2%29%250Aplt.title%28%27PCA%2520Graph%27%29%250Aplt.xlabel%28%27PC1%27%252Bper_var%255B0%255D%29%250Aplt.ylabel%28%27PC2%27%252Bper_var%255B1%255D%29%250Afor%2520sample%2520in%2520pca_df.index%253A%250A%2520%2520%2520%2520plt.annotate%28sample%2520%252C%2520pca_df.PC1.loc%255Bsample%255D%2520%252C%2520pca_df.PC2.loc%255Bsample%255D%29%250Aplt.show%28%29%250A
